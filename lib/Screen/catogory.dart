@@ -20,28 +20,23 @@ class CategoriesScreen extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
-    return Scaffold(
-      appBar: AppBar(
-        title: const Text("pick up your catogory"),
-      ),
-      body: GridView(
-        padding: const EdgeInsets.all(20),
-        gridDelegate: const SliverGridDelegateWithFixedCrossAxisCount(
-            crossAxisCount: 2,
-            childAspectRatio: 1.5,
-            mainAxisSpacing: 30,
-            crossAxisSpacing: 30),
-        children: [
-          // availableCategories.map((catogory) =>  CategoryGridItem(category: catogory)).toList();
-          for (final catogory in availableCategories)
-            CategoryGridItem(
-              category: catogory,
-              onselected: () {
-                selectcatogory(context, catogory);
-              },
-            )
-        ],
-      ),
+    return GridView(
+      padding: const EdgeInsets.all(20),
+      gridDelegate: const SliverGridDelegateWithFixedCrossAxisCount(
+          crossAxisCount: 2,
+          childAspectRatio: 1.5,
+          mainAxisSpacing: 30,
+          crossAxisSpacing: 30),
+      children: [
+        // availableCategories.map((catogory) =>  CategoryGridItem(category: catogory)).toList();
+        for (final catogory in availableCategories)
+          CategoryGridItem(
+            category: catogory,
+            onselected: () {
+              selectcatogory(context, catogory);
+            },
+          )
+      ],
     );
   }
 }
