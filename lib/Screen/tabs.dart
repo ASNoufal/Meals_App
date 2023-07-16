@@ -1,7 +1,8 @@
 import 'package:flutter/material.dart';
 import 'package:meal_app/Screen/Meals.dart';
 import 'package:meal_app/Screen/catogory.dart';
-import 'package:meal_app/Screen/main_drawer.dart';
+import 'package:meal_app/Screen/filters.dart';
+import 'package:meal_app/widgets/main_drawer.dart';
 import 'package:meal_app/model/Meal.dart';
 
 class Tabs extends StatefulWidget {
@@ -49,17 +50,31 @@ class _TabsState extends State<Tabs> {
       );
       titles = const Text("Yours Favorites");
     }
+
     void selectedpage(int index) {
       setState(() {
         selectedindex = index;
       });
     }
 
+    void ondrawer(String identifier) async {
+      Navigator.pop(context);
+      if (identifier == "filter") {
+        final result = await Navigator.push<Map<filtertheitems, bool>>(context,
+            MaterialPageRoute(builder: (context) {
+          return const FiltersScreen();
+        }));
+        print(result);
+      }
+    }
+
     return Scaffold(
       appBar: AppBar(
         title: titles,
       ),
-      drawer: MainDrawerScreen(),
+      drawer: MainDrawerScreen(
+        ondrawer: ondrawer,
+      ),
       bottomNavigationBar: BottomNavigationBar(
         currentIndex: selectedindex,
         onTap: selectedpage,
