@@ -2,13 +2,22 @@ import 'package:flutter/material.dart';
 import 'package:meal_app/model/Meal.dart';
 
 class MealsDetais extends StatelessWidget {
-  const MealsDetais({super.key, required this.meal});
+  const MealsDetais({super.key, required this.meal, required this.ontoggeled});
   final Meal meal;
+  final Function(Meal meal) ontoggeled;
   @override
   Widget build(BuildContext context) {
     return Scaffold(
       appBar: AppBar(
         title: Text(meal.title),
+        // fff
+        actions: [
+          IconButton(
+              onPressed: () {
+                ontoggeled(meal);
+              },
+              icon: const Icon(Icons.star))
+        ],
       ),
       body: SingleChildScrollView(
         child: Column(
