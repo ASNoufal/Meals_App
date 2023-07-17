@@ -1,12 +1,17 @@
 import 'package:flutter/material.dart';
+import 'package:flutter_riverpod/flutter_riverpod.dart';
+import 'package:meal_app/Screen/stateprovider.dart';
 import 'package:meal_app/model/Meal.dart';
 
-class MealsDetais extends StatelessWidget {
-  const MealsDetais({super.key, required this.meal, required this.ontoggeled});
+class MealsDetais extends ConsumerWidget {
+  const MealsDetais({
+    super.key,
+    required this.meal,
+  });
   final Meal meal;
-  final Function(Meal meal) ontoggeled;
+
   @override
-  Widget build(BuildContext context) {
+  Widget build(BuildContext context, WidgetRef ref) {
     return Scaffold(
       appBar: AppBar(
         title: Text(meal.title),
@@ -14,7 +19,13 @@ class MealsDetais extends StatelessWidget {
         actions: [
           IconButton(
               onPressed: () {
-                ontoggeled(meal);
+                final read = ref
+                    .read(statenotifierprovider.notifier)
+                    .ontoggeledmeal(meal);
+                ScaffoldMessenger.of(context).clearSnackBars();
+                ScaffoldMessenger.of(context).showSnackBar(SnackBar(
+                    content:
+                        Text(read ? "favoraite added" : "removed favorite")));
               },
               icon: const Icon(Icons.star))
         ],

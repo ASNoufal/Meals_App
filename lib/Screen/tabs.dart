@@ -1,61 +1,51 @@
 import 'package:flutter/material.dart';
+import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:meal_app/Screen/Meals.dart';
 import 'package:meal_app/Screen/catogory.dart';
 import 'package:meal_app/Screen/filters.dart';
+import 'package:meal_app/Screen/mealprovider.dart';
+import 'package:meal_app/Screen/stateprovider.dart';
+import 'package:meal_app/demodata/demidata.dart';
 import 'package:meal_app/widgets/main_drawer.dart';
 import 'package:meal_app/model/Meal.dart';
 
-class Tabs extends StatefulWidget {
+const kfiltereditem = {
+  filtertheitems.isglutonfree: false,
+  filtertheitems.islactosfree: false,
+  filtertheitems.isvegetarianfree: false,
+  filtertheitems.isveganfree: false,
+};
+
+class Tabs extends ConsumerStatefulWidget {
   const Tabs({super.key});
 
   @override
-  State<Tabs> createState() => _TabsState();
+  ConsumerState<Tabs> createState() => _TabsState();
 }
 
 int selectedindex = 0;
-List<Meal> toggeledmeal = [];
 
-class _TabsState extends State<Tabs> {
+Map<filtertheitems, bool> isfilter = kfiltereditem;
+
+class _TabsState extends ConsumerState<Tabs> {
   @override
   Widget build(BuildContext context) {
-    void showsnackbar(String message) {
-      ScaffoldMessenger.of(context).clearSnackBars();
-      ScaffoldMessenger.of(context)
-          .showSnackBar(SnackBar(content: Text(message)));
-    }
-
-    void ontoggeledmeal(Meal meal) {
-      final istoggeld = toggeledmeal.contains(meal);
-      if (istoggeld) {
-        setState(() {
-          toggeledmeal.remove(meal);
-        });
-
-        showsnackbar("Item removed from favorite");
-      } else {
-        setState(() {
-          toggeledmeal.add(meal);
-        });
-
-        showsnackbar("Item added to favorite");
+    final mealriverpod = ref.watch(mealprovider);
+    final availblescreen = mealriverpod.where((meal) {
+      if (isfilter[filtertheitems.isglutonfree]! && !meal.isGlutenFree) {
+        return false;
       }
-    }
-
-    Widget titles = const Text("pick up your catogory");
-    Widget activepage = CategoriesScreen(ontoggeled: ontoggeledmeal);
-    if (selectedindex == 1) {
-      activepage = MealsScreen(
-        meals: toggeledmeal,
-        ontoggeled: ontoggeledmeal,
-      );
-      titles = const Text("Yours Favorites");
-    }
-
-    void selectedpage(int index) {
-      setState(() {
-        selectedindex = index;
-      });
-    }
+      if (isfilter[filtertheitems.islactosfree]! && !meal.isLactoseFree) {
+        return false;
+      }
+      if (isfilter[filtertheitems.isveganfree]! && !meal.isVegan) {
+        return false;
+      }
+      if (isfilter[filtertheitems.isvegetarianfree]! && !meal.isVegetarian) {
+        return false;
+      }
+      return true;
+    }).toList();
 
     void ondrawer(String identifier) async {
       Navigator.pop(context);
@@ -64,8 +54,28 @@ class _TabsState extends State<Tabs> {
             MaterialPageRoute(builder: (context) {
           return const FiltersScreen();
         }));
-        print(result);
+        setState(() {
+          isfilter = result ?? kfiltereditem;
+        });
       }
+    }
+
+    Widget titles = const Text("pick up your catogory");
+    Widget activepage = CategoriesScreen(
+      availableMeal: availblescreen,
+    );
+    if (selectedindex == 1) {
+      final favoritemeal = ref.watch(statenotifierprovider);
+      activepage = MealsScreen(
+        meals: favoritemeal,
+      );
+      titles = const Text("Yours Favorites");
+    }
+
+    void selectedpage(int index) {
+      setState(() {
+        selectedindex = index;
+      });
     }
 
     return Scaffold(
