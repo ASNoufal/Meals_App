@@ -3,18 +3,11 @@ import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:meal_app/Screen/Meals.dart';
 import 'package:meal_app/Screen/catogory.dart';
 import 'package:meal_app/Screen/filters.dart';
-import 'package:meal_app/Screen/mealprovider.dart';
-import 'package:meal_app/Screen/stateprovider.dart';
-import 'package:meal_app/demodata/demidata.dart';
-import 'package:meal_app/widgets/main_drawer.dart';
-import 'package:meal_app/model/Meal.dart';
+import 'package:meal_app/provider/mealprovider.dart';
+import 'package:meal_app/provider/stateprovider.dart';
 
-const kfiltereditem = {
-  filtertheitems.isglutonfree: false,
-  filtertheitems.islactosfree: false,
-  filtertheitems.isvegetarianfree: false,
-  filtertheitems.isveganfree: false,
-};
+import 'package:meal_app/widgets/main_drawer.dart';
+import 'package:meal_app/provider/filterprovider.dart';
 
 class Tabs extends ConsumerStatefulWidget {
   const Tabs({super.key});
@@ -25,23 +18,24 @@ class Tabs extends ConsumerStatefulWidget {
 
 int selectedindex = 0;
 
-Map<filtertheitems, bool> isfilter = kfiltereditem;
-
 class _TabsState extends ConsumerState<Tabs> {
   @override
   Widget build(BuildContext context) {
     final mealriverpod = ref.watch(mealprovider);
+    final activefilters = ref.watch(filterprovider);
+
     final availblescreen = mealriverpod.where((meal) {
-      if (isfilter[filtertheitems.isglutonfree]! && !meal.isGlutenFree) {
+      if (activefilters[filtertheitems.isglutonfree]! && !meal.isGlutenFree) {
         return false;
       }
-      if (isfilter[filtertheitems.islactosfree]! && !meal.isLactoseFree) {
+      if (activefilters[filtertheitems.islactosfree]! && !meal.isLactoseFree) {
         return false;
       }
-      if (isfilter[filtertheitems.isveganfree]! && !meal.isVegan) {
+      if (activefilters[filtertheitems.isveganfree]! && !meal.isVegan) {
         return false;
       }
-      if (isfilter[filtertheitems.isvegetarianfree]! && !meal.isVegetarian) {
+      if (activefilters[filtertheitems.isvegetarianfree]! &&
+          !meal.isVegetarian) {
         return false;
       }
       return true;
@@ -50,13 +44,10 @@ class _TabsState extends ConsumerState<Tabs> {
     void ondrawer(String identifier) async {
       Navigator.pop(context);
       if (identifier == "filter") {
-        final result = await Navigator.push<Map<filtertheitems, bool>>(context,
+        await Navigator.push<Map<filtertheitems, bool>>(context,
             MaterialPageRoute(builder: (context) {
           return const FiltersScreen();
         }));
-        setState(() {
-          isfilter = result ?? kfiltereditem;
-        });
       }
     }
 
