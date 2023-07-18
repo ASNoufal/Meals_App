@@ -21,25 +21,7 @@ int selectedindex = 0;
 class _TabsState extends ConsumerState<Tabs> {
   @override
   Widget build(BuildContext context) {
-    final mealriverpod = ref.watch(mealprovider);
-    final activefilters = ref.watch(filterprovider);
-
-    final availblescreen = mealriverpod.where((meal) {
-      if (activefilters[filtertheitems.isglutonfree]! && !meal.isGlutenFree) {
-        return false;
-      }
-      if (activefilters[filtertheitems.islactosfree]! && !meal.isLactoseFree) {
-        return false;
-      }
-      if (activefilters[filtertheitems.isveganfree]! && !meal.isVegan) {
-        return false;
-      }
-      if (activefilters[filtertheitems.isvegetarianfree]! &&
-          !meal.isVegetarian) {
-        return false;
-      }
-      return true;
-    }).toList();
+    final availablefilter = ref.watch(filteredmealprovider);
 
     void ondrawer(String identifier) async {
       Navigator.pop(context);
@@ -52,8 +34,9 @@ class _TabsState extends ConsumerState<Tabs> {
     }
 
     Widget titles = const Text("pick up your catogory");
+
     Widget activepage = CategoriesScreen(
-      availableMeal: availblescreen,
+      availableMeal: availablefilter,
     );
     if (selectedindex == 1) {
       final favoritemeal = ref.watch(statenotifierprovider);

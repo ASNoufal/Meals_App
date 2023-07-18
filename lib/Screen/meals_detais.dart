@@ -12,6 +12,9 @@ class MealsDetais extends ConsumerWidget {
 
   @override
   Widget build(BuildContext context, WidgetRef ref) {
+    final favorateprovider = ref.watch(statenotifierprovider);
+
+    bool ismealavailable = favorateprovider.contains(meal);
     return Scaffold(
       appBar: AppBar(
         title: Text(meal.title),
@@ -27,7 +30,7 @@ class MealsDetais extends ConsumerWidget {
                     content:
                         Text(read ? "favoraite added" : "removed favorite")));
               },
-              icon: const Icon(Icons.star))
+              icon: Icon(ismealavailable ? Icons.star : Icons.star_border))
         ],
       ),
       body: SingleChildScrollView(
